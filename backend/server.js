@@ -1,16 +1,52 @@
 const http = require('http')
-const server = http.createServer( (req, res) => {
-  console.log(req)
-  console.log(req.url)
-  res.end('server response!')
-})
+const Koa = require('koa')
+const koaBody = require('koa-body')
+const app = new Koa()
+const port = process.env.PORT || 7070
 
-const port = 7070
-server.listen(port, (err) => {
-  if (err) {
-    console.log('Error occured:', error)
-    return
+let subscriptions = []
+
+app.use(koaBody({
+  urlencoded: true,
+}))
+
+app.use(async (ctx, next) => {
+  const origin = ctx.request.get('Origin')
+
+  if (!origin) {
+    return await next()
   }
-  console.log(`server is listening on ${port}`)
+
+  const headers = { 'Access-Control-Allow-Origin': '*', }
+  
+  if (ctx.request.method !== 'OPTIONS') {
+    ctx.response.set({...headers})
+    try {
+      return await next()
+    } catch (e) {
+      e.headers = {...e.headers, ...headers}
+      throw e
+    }
+  }
+  
+  if (ctx.request.get('Access-Control-Request-Method')) {
+    ctx.response.set({
+      ...headers,
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH',
+    })
+  
+    if (ctx.request.get('Access-Control-Request-Headers')) {
+      ctx.response.set('Access-Control-Allow-Headers', ctx.request.get('Access-Control-Allow-Request-Headers'))
+    }
+  
+    ctx.response.status = 204
+  }
 })
 
+app.use(async (ctx) => {
+  subscriptions.push(ctx.request.body)
+  console.log(subscriptions)
+  ctx.response.body = 'Added!'
+})
+
+const server = http.createServer(app.callback()).listen(port)

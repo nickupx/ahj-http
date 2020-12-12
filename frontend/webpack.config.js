@@ -86,7 +86,6 @@ const plugins = () => {
     }),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
-      { from: path.resolve(__dirname, 'src/favicon.ico'), to: path.resolve(__dirname, 'dist') },
       { from: path.resolve(__dirname, 'src/LICENSE.txt'), to: path.resolve(__dirname, 'dist') }
       ]
     ),

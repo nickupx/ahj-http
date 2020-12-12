@@ -9,6 +9,11 @@
     "watch": "forever -w server.js"
   },
   "dependencies": {
-    "forever": "^3.0.4"
+    "forever": "^3.0.4",
+    "koa": "^2.13.0",
+    "koa-body": "^4.2.0"
+  },
+  "engines": {
+    "node": "14.13.1"
   }
 }
