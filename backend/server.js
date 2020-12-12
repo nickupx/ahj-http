@@ -4,10 +4,20 @@ const koaBody = require('koa-body')
 const app = new Koa()
 const port = process.env.PORT || 7070
 
+const path = require('path')
+const fs = require('fs')
+const uuid = require('uuid')
+const public = path.join(__dirname,'/public')
+
+const koaStatic = require('koa-static')
+app.use(koaStatic(public))
+
+
 let subscriptions = []
 
 app.use(koaBody({
   urlencoded: true,
+  multipart: true,
 }))
 
 app.use(async (ctx, next) => {
@@ -46,7 +56,7 @@ app.use(async (ctx, next) => {
 app.use(async (ctx) => {
   subscriptions.push(ctx.request.body)
   console.log(subscriptions)
-  ctx.response.body = 'Added!'
+  ctx.response.body = 'Uploaded!'
 })
 
 const server = http.createServer(app.callback()).listen(port)
