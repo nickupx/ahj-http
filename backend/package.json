@@ -1,0 +1,14 @@
+{
+  "name": "ajs-http-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "forever server.js",
+    "watch": "forever -w server.js"
+  },
+  "dependencies": {
+    "forever": "^3.0.4"
+  }
+}
